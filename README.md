@@ -1,6 +1,14 @@
 
 #   설정 및 실행
-*   not complete
+*   Node.js 모듈 설치
+    ```
+    $ npm install
+    ```
+*   빌드 및 실행
+    ```
+    $ npm run build
+    $ npm start
+    ```
 
 #   GraphQL App 과제 개발 위키
 #   과제 명세 분석
@@ -309,4 +317,19 @@
     1.  사용법 : resolver, typedefs string을 통해 schema를 schema.ts에 만들고, 이것을 export해 server.ts에서 사용
         *   데이터 전달 타입인 InputUpdateExchangeInfo, InputDeleteExchangeInfo, ExchangeInfo을 types.ts에 정의 후 사용
         *   resolver에 등록할 요청 처리 함수 getExchangeRate, postExchangeRate, deleteExchangeRate를 db.ts에 정의 후 사용
-*   db를 생성하는 코드를 작성 후, npm에 등록
+*   graphql로 들어온 요청을 resolver에서 어떻게 처리할지 모르겠음
+    *   공식 문서에, 4개의 argument를 콜백으로 전달하고, 그 중 args에, 요청 쿼리 객체가 들어온다고 되어 있음
+
+*   정해진 스키마 형태의 입력을 수행하기 위해 mongoose.model을 사용하기로 함.
+    * src, tat, rate, date를 가지는 스키마를 생성하고, 이를 통해 mongoose model을 생성
+*   Atomic한 CRUD를 지원하는 메소드 findOne, findOneAndUpdate(upsert: true), findOneAndDelete를 이용
+*   server.ts 구현
+    *   graphql-yoga, node:http 패키지를 이용해서 http 서버를 만들고, port 5110에서 listen
+    *   schema.ts에서 export 한 schema로 graphql-yoga의 createYoga
+
+*   과제 명세 관련 
+    *   'src' 와 'tgt'가 같은 문자열일 때의 동작을 추가하기
+        *   postexchangerate에서, 해당 경우에 rate는 항상 1.0으로 저장하자
+    *   'src' 와 'tgt'가 서로 바뀌어 주어질 때 정상적으로 동작하게 하기
+        *   getExchangeRate에서, {src, tgt} or {src:tgt, tgt:src}로 findone한다
+        *   해당 경우, src, tgt을 요청과 match한 결과에 따라 rate 또는 1/rate로 응답

@@ -11,7 +11,7 @@
     ```
 
 #   GraphQL App 과제 개발 위키
-#   과제 명세 분석
+##   과제 명세 분석
 1.  graphql 요청을 받을 것
 1.  요청의 종류에 따라 mongoDB에 CRUD 요청을 보낼 것
 1.  요청의 종류
@@ -330,6 +330,11 @@
 *   과제 명세 관련 
     *   'src' 와 'tgt'가 같은 문자열일 때의 동작을 추가하기
         *   postexchangerate에서, 해당 경우에 rate는 항상 1.0으로 저장하자
+        *   <b>미구현</b> : postExchangeRate에서 explicit하게 해당 경우를 create한 경우라면, 해당하는 document를 응답하면 되지만, implicit하게 getExchangeRate로 요청하는 경우 어떻게 응답할지 불확실
+            1.  어떤 값이 getExchangeRate로 요청이 들어오든지 rate:1로 응답
+            1.  해당 src를 가지고 있는 document가 존재할 경우 rate:1로 응답 
     *   'src' 와 'tgt'가 서로 바뀌어 주어질 때 정상적으로 동작하게 하기
         *   getExchangeRate에서, {src, tgt} or {src:tgt, tgt:src}로 findone한다
         *   해당 경우, src, tgt을 요청과 match한 결과에 따라 rate 또는 1/rate로 응답
+
+    

@@ -1,6 +1,9 @@
-# GraphQL App 과제 개발 위키
 
-# 과제 명세 분석
+#   설정 및 실행
+*   not complete
+
+#   GraphQL App 과제 개발 위키
+#   과제 명세 분석
 1.  graphql 요청을 받을 것
 1.  요청의 종류에 따라 mongoDB에 CRUD 요청을 보낼 것
 1.  요청의 종류
@@ -259,15 +262,7 @@
         date: String!
         }
         ```
-##  처음으로 할 수 있는 일
-
-*   개발 환경 설정
-    1.  개발 환경 확인
-    1.  node 설치 확인
-    1.  npm으로 graphql을 동작하는 라이브러리 설치
-    1.  ts 설치
-    1.  mongodb 설치
-###   결과
+##  최초 환경 설정
 
 *   개발 환경 설정
     1.  개발 환경 확인
@@ -300,3 +295,18 @@
         found 0 vulnerabilities
         ```
     1.  mongodb 설치
+        *   https://www.mongodb.com/try/download/community
+        *   community 버전 설치
+        *   설치 완료 후 디렉토리 내의 mongod.exe 실행 후 localhost:27017 정상 응답 확인
+
+##  프로젝트 파일 생성
+*   require('graphql-yoga')를 인식하지 못하는 문제
+    1.  npm tsc --init
+    1.  package.json에 compile 관련 설정 추가
+*   compile된 js 파일이 dest 디렉토리가 아니라, src 디렉토리에 생기는 현상
+    1.  tsconfig.json에 "outDir": "./dist/"를 추가
+*   schema 등록을 위해 graphql-yoga의 createSchema 함수를 이용하기로 함
+    1.  사용법 : resolver, typedefs string을 통해 schema를 schema.ts에 만들고, 이것을 export해 server.ts에서 사용
+        *   데이터 전달 타입인 InputUpdateExchangeInfo, InputDeleteExchangeInfo, ExchangeInfo을 types.ts에 정의 후 사용
+        *   resolver에 등록할 요청 처리 함수 getExchangeRate, postExchangeRate, deleteExchangeRate를 db.ts에 정의 후 사용
+*   db를 생성하는 코드를 작성 후, npm에 등록

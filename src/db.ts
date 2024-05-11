@@ -16,7 +16,7 @@ const Model = mongoose.model('ExchangeInfo', ExchangeSchema);
 async function getExchangeRate(obj: any, args: GetExchangeInfo, context: any, info: any): Promise<ExchangeInfo> {
     console.log('getExchangeRate', args);
     const data = await Model.findOne(
-        { src: args.src, tgt: args.tgt},
+        { $or: [{src: args.src, tgt: args.tgt},{src: args.tgt, tgt: args.src}] },
         {},
         {sort : {date: -1}}
     );
@@ -26,7 +26,12 @@ async function getExchangeRate(obj: any, args: GetExchangeInfo, context: any, in
         rate = 0;
     }
     else{
-        rate = data?.rate;
+        if (data?.src === args.src && data?.tgt === args.tgt){
+            rate = data.rate;
+        }
+        else{
+            rate = 1/data.rate;
+        }
     }
     return {src: ''+data?.src, tgt: ''+data?.tgt, rate: rate, date: ''+data?.date};
 }
@@ -34,13 +39,16 @@ async function getExchangeRate(obj: any, args: GetExchangeInfo, context: any, in
 
 async function postExchangeRate(obj: any, args: {info: InputUpdateExchangeInfo}, context: any, info: any): Promise<ExchangeInfo> {
     console.log('postExchangeRate, query:', args);
+    if (args.info.src === args.info.tgt) {
+        args.info.rate = 1;
+    }
     let data;
     if (!args.info.date) { // args.date is null or undefined or mf
         data = await Model.findOneAndUpdate(
         
             { src: args.info.src, tgt: args.info.tgt}, 
             { src: args.info.src, tgt: args.info.tgt, rate: args.info.rate} ,   //가장 최근의 환율을 업데이트
-            { new: true, upsert: true, sort: {date: -1}}
+            { new: true, upsert: false, sort: {date: -1}}
         );
     }
     else{//args.date is not null
@@ -53,13 +61,13 @@ async function postExchangeRate(obj: any, args: {info: InputUpdateExchangeInfo},
     }
     console.log('postExchangeRate, data:', data);
     let rate:number;
-    if (data.rate === null || data.rate === undefined) {
+    if (data?.rate === null || data?.rate === undefined) {
         rate = 0;
     }
     else{
         rate = data.rate;
     }
-    return {src: ''+data.src, tgt: ''+data.tgt, rate: rate, date: ''+data.date};
+    return {src: ''+data?.src, tgt: ''+data?.tgt, rate: rate, date: ''+data?.date};
 }
 
 

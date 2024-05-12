@@ -15,6 +15,9 @@ const Model = mongoose.model('ExchangeInfo', ExchangeSchema);
 
 async function getExchangeRate(obj: any, args: GetExchangeInfo, context: any, info: any): Promise<ExchangeInfo> {
     console.log('getExchangeRate', args);
+    if (args.src === args.tgt) {
+        return {src: args.src, tgt: args.tgt, rate: 1, date: ''};
+    }
     const data = await Model.findOne(
         { $or: [{src: args.src, tgt: args.tgt},{src: args.tgt, tgt: args.src}] },
         {},

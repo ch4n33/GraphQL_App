@@ -1,5 +1,4 @@
 import { createSchema } from 'graphql-yoga'
-import { InputUpdateExchangeInfo, InputDeleteExchangeInfo, ExchangeInfo } from './types'
 import { getExchangeRate, postExchangeRate, deleteExchangeRate } from './db'
 
 const typeDefs = `

@@ -1,10 +1,6 @@
 {
   "dependencies": {
-    "dotenv": "^16.4.5",
-    "eslint": "^9.2.0",
-    "express-graphql": "^0.12.0",
     "graphql-yoga": "^5.3.1",
-    "mongodb": "^6.6.1",
     "mongoose": "^8.3.4"
   },
   "devDependencies": {
@@ -20,7 +16,8 @@
     "build": "tsc -p .",
     "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/index.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "db": "node build_db.js"
+    "test_db": "node test_db.js"
+    
   },
   "compilerOptions": {
     "target": "es6",

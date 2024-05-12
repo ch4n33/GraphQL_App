@@ -1,10 +1,16 @@
 
 #   설정 및 실행
-*   Node.js 모듈 설치
+1.  Node.js 모듈 설치합니다
     ```
     $ npm install
     ```
-*   빌드 및 실행
+1.  localhost:27017에서 MongoDB를 켭니다
+    *   mongodb 연결을 테스트합니다
+        ```
+        $ npm run test_db
+        ```
+    *   결과가 unsuccessful할 시 MongoDB가 켜져 있는지, 27017 port에서 listen중인지 확인합니다.
+1.  빌드 및 실행
     ```
     $ npm run build
     $ npm start
@@ -15,113 +21,117 @@
 1.  graphql 요청을 받을 것
 1.  요청의 종류에 따라 mongoDB에 CRUD 요청을 보낼 것
 1.  요청의 종류
-    *   Read 요청
+    <details>
+    <summary>Read 요청</summary>
+
+    *   요청 
         ```
         type Query {
         "환율조회"
         getExchangeRate(src:String!, tgt:String!): ExchangeInfo
         }
         ```
-        <details>
-        <summary>테스트 쿼리</summary>
 
-        *   쿼리 1
-            ```
-            #get
-            curl -XPOST "http://localhost:5110/graphql" --silent \
-            -H  "accept: application/json" \
-            -H  "Content-Type: application/json" \
-            -d '
-            { 
-            "query": "query { getExchangeRate (src: \"krw\", tgt: \"usd\") { src tgt rate date } }"
+    *   쿼리 1
+        ```
+        #get
+        curl -XPOST "http://localhost:5110/graphql" --silent \
+        -H  "accept: application/json" \
+        -H  "Content-Type: application/json" \
+        -d '
+        { 
+        "query": "query { getExchangeRate (src: \"krw\", tgt: \"usd\") { src tgt rate date } }"
+        }
+        ' | jq
+        #result
+        {
+        "data": {
+            "getExchangeRate": {
+            "src": "krw",
+            "tgt": "usd",
+            "rate": 0.0007450954094671824,
+            "date": "2022-11-28"
             }
-            ' | jq
-            #result
-            {
-            "data": {
-                "getExchangeRate": {
-                "src": "krw",
-                "tgt": "usd",
-                "rate": 0.0007450954094671824,
-                "date": "2022-11-28"
-                }
-            }
-            }
+        }
+        }
 
-            ```
-        *   쿼리 2
-            ```
-            #get
-            curl -XPOST "http://localhost:5110/graphql" --silent \
-            -H  "accept: application/json" \
-            -H  "Content-Type: application/json" \
-            -d '
-            { 
-            "query": "query { getExchangeRate (src: \"usd\", tgt: \"krw\") { src tgt rate date } }"
+        ```
+    *   쿼리 2
+        ```
+        #get
+        curl -XPOST "http://localhost:5110/graphql" --silent \
+        -H  "accept: application/json" \
+        -H  "Content-Type: application/json" \
+        -d '
+        { 
+        "query": "query { getExchangeRate (src: \"usd\", tgt: \"krw\") { src tgt rate date } }"
+        }
+        ' | jq
+        #result
+        {
+        "data": {
+            "getExchangeRate": {
+            "src": "usd",
+            "tgt": "krw",
+            "rate": 1342.11,
+            "date": "2022-11-28"
             }
-            ' | jq
-            #result
-            {
-            "data": {
-                "getExchangeRate": {
-                "src": "usd",
-                "tgt": "krw",
-                "rate": 1342.11,
-                "date": "2022-11-28"
-                }
+        }
+        }
+        ```
+    *   쿼리 3
+        ```
+        #get
+        curl -XPOST "http://localhost:5110/graphql" --silent \
+        -H  "accept: application/json" \
+        -H  "Content-Type: application/json" \
+        -d '
+        { 
+        "query": "query { getExchangeRate (src: \"usd\", tgt: \"usd\") { src tgt rate date } }"
+        }
+        ' | jq
+        #result
+        {
+        "data": {
+            "getExchangeRate": {
+            "src": "usd",
+            "tgt": "usd",
+            "rate": 1,
+            "date": "2022-11-28"
             }
+        }
+        }
+        ```
+    *   쿼리 4
+        ```
+        #get
+        curl -XPOST "http://localhost:5110/graphql" --silent \
+        -H  "accept: application/json" \
+        -H  "Content-Type: application/json" \
+        -d '
+        { 
+        "query": "query { getExchangeRate (src: \"krw\", tgt: \"krw\") { src tgt rate date } }"
+        }
+        ' | jq
+        #result
+        {
+        "data": {
+            "getExchangeRate": {
+            "src": "krw",
+            "tgt": "krw",
+            "rate": 1,
+            "date": "2022-11-28"
             }
-            ```
-        *   쿼리 3
-            ```
-            #get
-            curl -XPOST "http://localhost:5110/graphql" --silent \
-            -H  "accept: application/json" \
-            -H  "Content-Type: application/json" \
-            -d '
-            { 
-            "query": "query { getExchangeRate (src: \"usd\", tgt: \"usd\") { src tgt rate date } }"
-            }
-            ' | jq
-            #result
-            {
-            "data": {
-                "getExchangeRate": {
-                "src": "usd",
-                "tgt": "usd",
-                "rate": 1,
-                "date": "2022-11-28"
-                }
-            }
-            }
-            ```
-        *   쿼리 4
-            ```
-            #get
-            curl -XPOST "http://localhost:5110/graphql" --silent \
-            -H  "accept: application/json" \
-            -H  "Content-Type: application/json" \
-            -d '
-            { 
-            "query": "query { getExchangeRate (src: \"krw\", tgt: \"krw\") { src tgt rate date } }"
-            }
-            ' | jq
-            #result
-            {
-            "data": {
-                "getExchangeRate": {
-                "src": "krw",
-                "tgt": "krw",
-                "rate": 1,
-                "date": "2022-11-28"
-                }
-            }
-            }
+        }
+        }
 
-            ```
-        </details>
-        
-    *   Update 요청
+        ```
+    </details>
+    
+    <details>
+    <summary>Update 요청</summary>
+
+    *   요청
         ```
         type Mutation {
         "환율등록, src, tgt, date에 대해서 upsert"
@@ -142,59 +152,61 @@
         date: String
         }
         ```
-        <details>
-        <summary>테스트 쿼리</summary>
+    
 
-        *   쿼리 1
-            ```
-            #update
-            curl -XPOST "http://localhost:5110/graphql" --silent \
-            -H  "accept: application/json" \
-            -H  "Content-Type: application/json" \
-            -d '
-            { 
-            "query": "mutation { postExchangeRate (info: { src: \"usd\", tgt: \"krw\", rate: 1342.11, date:\"2022-11-28\" }) { src tgt rate date } }"
+    *   쿼리 1
+        ```
+        #update
+        curl -XPOST "http://localhost:5110/graphql" --silent \
+        -H  "accept: application/json" \
+        -H  "Content-Type: application/json" \
+        -d '
+        { 
+        "query": "mutation { postExchangeRate (info: { src: \"usd\", tgt: \"krw\", rate: 1342.11, date:\"2022-11-28\" }) { src tgt rate date } }"
+        }
+        ' | jq
+        #result
+        {
+        "data": {
+            "postExchangeRate": {
+            "src": "usd",
+            "tgt": "krw",
+            "rate": 1342.11,
+            "date": "2022-11-28"
             }
-            ' | jq
-            #result
-            {
-            "data": {
-                "postExchangeRate": {
-                "src": "usd",
-                "tgt": "krw",
-                "rate": 1342.11,
-                "date": "2022-11-28"
-                }
-            }
-            }
-            ```
-        *   쿼리 2
-            ```
-            #update
-            curl -XPOST "http://localhost:5110/graphql" --silent \
-            -H  "accept: application/json" \
-            -H  "Content-Type: application/json" \
-            -d '
-            { 
-            "query": "mutation { postExchangeRate (info: { src: \"krw\", tgt: \"krw\", rate: 2.0, date:\"2022-11-28\" }) { src tgt rate date } }"
-            }
-            ' | jq
+        }
+        }
+        ```
+    *   쿼리 2
+        ```
+        #update
+        curl -XPOST "http://localhost:5110/graphql" --silent \
+        -H  "accept: application/json" \
+        -H  "Content-Type: application/json" \
+        -d '
+        { 
+        "query": "mutation { postExchangeRate (info: { src: \"krw\", tgt: \"krw\", rate: 2.0, date:\"2022-11-28\" }) { src tgt rate date } }"
+        }
+        ' | jq
 
-            #result
-            {
-            "data": {
-                "postExchangeRate": {
-                "src": "krw",
-                "tgt": "krw",
-                "rate": 1,
-                "date": "2022-11-28"
-                }
+        #result
+        {
+        "data": {
+            "postExchangeRate": {
+            "src": "krw",
+            "tgt": "krw",
+            "rate": 1,
+            "date": "2022-11-28"
             }
-            }
-            ```
-        </details>
+        }
+        }
+        ```
+    </details>
 
-    *   Delete 요청
+    <details>
+    <summary>Delete 요청</summary>
+
+    *   요청
         ```
         "환율삭제 Input"
         input InputDeleteExchangeInfo {
@@ -206,57 +218,59 @@
         date: String!
         }
         ```
-        <details>
-        <summary>테스트 쿼리</summary>
+    
 
-        *   쿼리 1
-            ```
-            #delete
-            curl -XPOST "http://localhost:5110/graphql" --silent \
-            -H  "accept: application/json" \
-            -H  "Content-Type: application/json" \
-            -d '
-            { 
-            "query": "mutation { deleteExchangeRate (info: { src: \"usd\", tgt: \"krw\", date:\"2022-11-28\" }) { src tgt rate date } }"
+    *   쿼리 1
+        ```
+        #delete
+        curl -XPOST "http://localhost:5110/graphql" --silent \
+        -H  "accept: application/json" \
+        -H  "Content-Type: application/json" \
+        -d '
+        { 
+        "query": "mutation { deleteExchangeRate (info: { src: \"usd\", tgt: \"krw\", date:\"2022-11-28\" }) { src tgt rate date } }"
+        }
+        ' | jq
+        #result
+        {
+        "data": {
+            "deleteExchangeRate": {
+            "src": "usd",
+            "tgt": "krw",
+            "rate": 1342.11,
+            "date": "2022-11-28"
             }
-            ' | jq
-            #result
-            {
-            "data": {
-                "deleteExchangeRate": {
-                "src": "usd",
-                "tgt": "krw",
-                "rate": 1342.11,
-                "date": "2022-11-28"
-                }
+        }
+        }
+        ```
+    *   쿼리 2
+        ```
+        #delete
+        curl -XPOST "http://localhost:5110/graphql" --silent \
+        -H  "accept: application/json" \
+        -H  "Content-Type: application/json" \
+        -d '
+        { 
+        "query": "mutation { deleteExchangeRate (info: { src: \"krw\", tgt: \"krw\", date:\"2022-11-28\" }) { src tgt rate date } }"
+        }
+        ' | jq
+        #result
+        {
+        "data": {
+            "deleteExchangeRate": {
+            "src": "krw",
+            "tgt": "krw",
+            "rate": 1,
+            "date": "2022-11-28"
             }
-            }
-            ```
-        *   쿼리 2
-            ```
-            #delete
-            curl -XPOST "http://localhost:5110/graphql" --silent \
-            -H  "accept: application/json" \
-            -H  "Content-Type: application/json" \
-            -d '
-            { 
-            "query": "mutation { deleteExchangeRate (info: { src: \"krw\", tgt: \"krw\", date:\"2022-11-28\" }) { src tgt rate date } }"
-            }
-            ' | jq
-            #result
-            {
-            "data": {
-                "deleteExchangeRate": {
-                "src": "krw",
-                "tgt": "krw",
-                "rate": 1,
-                "date": "2022-11-28"
-                }
-            }
-            }
-            ```
-        </details>
-    *   기타 정보
+        }
+        }
+        ```
+    </details>
+
+    <details>
+    <summary>기타 정보</summary>
+    *   환율을 저장할 정보
         ```
         "환율정보"
         type ExchangeInfo @key(fields: "src, tgt") {
@@ -270,6 +284,7 @@
         date: String!
         }
         ```
+    </details>
 ##  최초 환경 설정
 
 *   개발 환경 설정
@@ -306,6 +321,7 @@
         *   https://www.mongodb.com/try/download/community
         *   community 버전 설치
         *   설치 완료 후 디렉토리 내의 mongod.exe 실행 후 localhost:27017 정상 응답 확인
+    1.  기타 필요한 패키지는 그때그때 설치
 
 ##  프로젝트 파일 생성
 *   require('graphql-yoga')를 인식하지 못하는 문제
@@ -318,6 +334,9 @@
         *   데이터 전달 타입인 InputUpdateExchangeInfo, InputDeleteExchangeInfo, ExchangeInfo을 types.ts에 정의 후 사용
         *   resolver에 등록할 요청 처리 함수 getExchangeRate, postExchangeRate, deleteExchangeRate를 db.ts에 정의 후 사용
 *   graphql로 들어온 요청을 resolver에서 어떻게 처리할지 모르겠음
+*   schema를 graphql-yoga가 제대로 인식하지 못하는 문제
+    1.  @key 키워드를 인식하지 못하는 것으로 보여, 이를 schema에서 삭제
+    1.  성능 상 문제가 있을 가능성이 있을지도 모르겠지만, graphql-yoga에서 기본적으로는 지원하지 않아, 이것을 고치려면 Apollo 등 다른 패키지를 사용해야 할 가능성이 있으므로 삭제
     *   공식 문서에, 4개의 argument를 콜백으로 전달하고, 그 중 args에, 요청 쿼리 객체가 들어온다고 되어 있음
 
 *   정해진 스키마 형태의 입력을 수행하기 위해 mongoose.model을 사용하기로 함.
@@ -330,9 +349,9 @@
 *   과제 명세 관련 
     *   'src' 와 'tgt'가 같은 문자열일 때의 동작을 추가하기
         *   postexchangerate에서, 해당 경우에 rate는 항상 1.0으로 저장하자
-        *   <b>미구현</b> : postExchangeRate에서 explicit하게 해당 경우를 create한 경우라면, 해당하는 document를 응답하면 되지만, implicit하게 getExchangeRate로 요청하는 경우 어떻게 응답할지 불확실
+        *   getExchangeRate로 요청하는 경우 어떻게 응답할지 확실하게 과제 명세에서 제공되어 있지 않다.
             1.  어떤 값이 getExchangeRate로 요청이 들어오든지 rate:1로 응답
-            1.  해당 src를 가지고 있는 document가 존재할 경우 rate:1로 응답 
+            1.  <del>해당 src를 가지고 있는 document가 존재할 경우 rate:1로 응답 </del>
     *   'src' 와 'tgt'가 서로 바뀌어 주어질 때 정상적으로 동작하게 하기
         *   getExchangeRate에서, {src, tgt} or {src:tgt, tgt:src}로 findone한다
         *   해당 경우, src, tgt을 요청과 match한 결과에 따라 rate 또는 1/rate로 응답
